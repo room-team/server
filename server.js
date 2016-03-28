@@ -23,64 +23,40 @@ if (Meteor.isClient) {
 //ROom colectino
 //sensor collection
 if (Meteor.isServer) {
-  Accounts.onCreateUser(function(options, user) {
-      //pass the surname in the options
-
-      user.profile.room = options.room;
-
-      return user;
-  });
-
   Meteor.startup(function () {
+    JsonRoutes.Middleware.use('/api', JsonRoutes.Middleware.parseBearerToken);
+    JsonRoutes.Middleware.use('/api', JsonRoutes.Middleware.authenticateMeteorUserByToken);
 
-    // code to run on server at startup
-    Meteor.method("add_sensor", function (username, password, room_id) {
-      var options = {
-        username: username,
-        password: password,
-        room: room_id
-      };
-
-      Accounts.createUser(options, function(err) {
-        return err;
-      });
-    }, {
-      url: "add_sensor",
-      httpMethod: "post",
-      getArgsFromRequest: function (request) {
-        // Let's say we want this function to accept a form-encoded request with 
-        // fields named `a` and `b`. 
-        var content = request.body;
-        var password = content.password;
-        var username = content.username;
-        var room_id = content.room_id;
-
-        // Since form enconding doesn't distinguish numbers and strings, we need 
-        // to parse it manually 
-        return [ password, username, room_id ];
-      }
+    Accounts.onCreateUser(function(options, user) {
+        user.profile['room'] = options.room;
+        return user;
     });
 
-    Meteor.publish("rooms_avalailable", function (index) {
-      return Widgets.find({index: {$gt: parseInt(index, 10)}});
-    }, {
-      url: "rooms_avalailable",
-      httpMethod: "get"
+    JsonRoutes.add("post", "/api/add_sensor/", function (req, res, next) {
+      var user = req.user_id,
+      var room = req.room_id
+      if(user != null){
+        Meteor.users.update({_id:user}, { $set: {'room': room} });
+        JsonRoutes.sendResult(res, {code: 200});
+      }else
+        JsonRoutes.sendResult(res, {code: 500});
     });
-    Meteor.publish("room_status", function (index) {
-      return Widgets.find({index: {$gt: parseInt(index, 10)}});
-    }, {
-      url: "room_status",
-      httpMethod: "post",
-      getArgsFromRequest: function (request) {
-        // Let's say we want this function to accept a form-encoded request with 
-        // fields named `a` and `b`. 
-        var content = request.body;
-      
-        // Since form enconding doesn't distinguish numbers and strings, we need 
-        // to parse it manually 
-        return [ parseInt(content.a, 10), parseInt(content.b, 10) ];
-      }
+
+    JsonRoutes.add("get", "/rooms_avalailable/", function (req, res, next) {
+      var rooms_avalailable = []
+      JsonRoutes.sendResult(res, {code: 200, rooms: rooms_avalailable});
+    });
+
+    JsonRoutes.add("post", "/api/room_status/:id", function (req, res, next) {
+      var user = req.user_id;
+      var room = req.params.id;
+      var status = req.status;
+
+      if(user != null){
+        Rooms.update({_id:room}, { $set: {'status': status} });
+        JsonRoutes.sendResult(res, {code: 200});
+      }else
+        JsonRoutes.sendResult(res, {code: 500});
     });
   });
 }
