@@ -1,7 +1,5 @@
 Sensors = new Mongo.Collection("sensors");
 Rooms = new Mongo.Collection("rooms");
-Accounts = Meteor.users;
-
 
 if (Meteor.isClient) {
   // counter starts at 0
@@ -34,7 +32,7 @@ if (Meteor.isServer) {
 
     JsonRoutes.add("post", "/api/add_sensor/", function (req, res, next) {
       var user = req.user_id,
-      var room = req.room_id
+          room = req.room_id;
       if(user != null){
         Meteor.users.update({_id:user}, { $set: {'room': room} });
         JsonRoutes.sendResult(res, {code: 200});
@@ -48,9 +46,9 @@ if (Meteor.isServer) {
     });
 
     JsonRoutes.add("post", "/api/room_status/:id", function (req, res, next) {
-      var user = req.user_id;
-      var room = req.params.id;
-      var status = req.status;
+      var user = req.user_id,
+          room = req.params.id,
+          status = req.status;
 
       if(user != null){
         Rooms.update({_id:room}, { $set: {'status': status} });
