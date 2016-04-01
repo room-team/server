@@ -31,7 +31,7 @@ if (Meteor.isServer) {
         JsonRoutes.sendResult(res, {code: 500});
     });
 
-    JsonRoutes.add("get", "/rooms_avalailable/", function (req, res, next) {
+    JsonRoutes.add("get", "/rooms_available/", function (req, res, next) {
       var rooms_avalailable = []
       JsonRoutes.sendResult(res, {code: 200, rooms: rooms_avalailable});
     });
