@@ -7,7 +7,7 @@
 
 .room {
   width: 50%;
-  margint: 1em;
+  margin: 1em;
   height: 10em;
   background: #ccc;
 }
@@ -18,4 +18,8 @@
 
 .room.occupied {
   background: red;
+}
+
+.room.labby {
+  background: white;
 }
