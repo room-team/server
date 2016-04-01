@@ -9,5 +9,13 @@
   width: 50%;
   margint: 1em;
   height: 10em;
+  background: #ccc;
+}
+
+.room.vacant {
   background: green;
+}
+
+.room.occupied {
+  background: red;
 }

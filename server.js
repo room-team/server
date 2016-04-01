@@ -5,11 +5,11 @@ if (Meteor.isClient) {
 
   Template.rooms.helpers({
     rooms: function () {
-      return [{active: 'active'}, {active: ''}];
+      return [{status: 'vacant'}, {status: 'occupied'}];
     }
   });
 }
-//ROom colectino
+//Room colection
 //sensor collection
 if (Meteor.isServer) {
   Meteor.startup(function () {
