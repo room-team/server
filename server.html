@@ -1,14 +1,16 @@
 <head>
-  <title>server</title>
+  <title>Team Room Team</title>
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
-
-  {{> hello}}
+  <h1>Welcome to Our App!</h1>
+  {{> rooms}}
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="rooms">
+  <div class="rooms">
+    {{#each room}}
+      <div class="{room.active} room"></div>
+    {{/each}}
+  </div>
 </template>

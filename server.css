@@ -1,1 +1,13 @@
 /* CSS declarations go here */
+.rooms {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.room {
+  width: 50%;
+  margint: 1em;
+  height: 10em;
+  background: green;
+}
