@@ -1,14 +1,27 @@
 /* CSS declarations go here */
+html {
+  height: 100%;
+  width: 100%;
+}
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
 .rooms {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  max-width: 35em;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .room {
-  width: 50%;
-  margin: 1em;
-  height: 10em;
+  width: 40%;
+  margin: .25em 1em;
+  height: calc(16.5% - .5em);
   background: #ccc;
 }
 
@@ -18,8 +31,4 @@
 
 .room.occupied {
   background: red;
-}
-
-.room.labby {
-  background: white;
 }

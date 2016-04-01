@@ -4,8 +4,8 @@ Rooms = new Mongo.Collection("rooms");
 if (Meteor.isClient) {
 
   Template.rooms.helpers({
-    rooms: function () {
-      return [{status: 'vacant'}, {status: 'occupied'}];
+    room: function () {
+      return [{status: 'vacant'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}, {status: 'occupied'}];
     }
   });
 }

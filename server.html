@@ -3,14 +3,13 @@
 </head>
 
 <body>
-  <h1>Welcome to Our App!</h1>
   {{> rooms}}
 </body>
 
 <template name="rooms">
   <div class="rooms">
     {{#each room}}
-      <div class="{room.status} room"></div>
+      <div class="{{status}} room"></div>
     {{/each}}
   </div>
 </template>
