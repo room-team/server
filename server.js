@@ -13,39 +13,40 @@ if (Meteor.isClient) {
 //sensor collection
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    JsonRoutes.Middleware.use('/api', JsonRoutes.Middleware.parseBearerToken);
-    JsonRoutes.Middleware.use('/api', JsonRoutes.Middleware.authenticateMeteorUserByToken);
-
     Accounts.onCreateUser(function(options, user) {
         user.profile['room'] = options.room;
         return user;
     });
 
-    JsonRoutes.add("post", "/api/add_sensor/", function (req, res, next) {
-      var user = req.user_id,
-          room = req.room_id;
-      if(user != null){
-        Meteor.users.update({_id:user}, { $set: {'room': room} });
-        JsonRoutes.sendResult(res, {code: 200});
-      }else
-        JsonRoutes.sendResult(res, {code: 500});
-    });
-
-    JsonRoutes.add("get", "/rooms_available/", function (req, res, next) {
-      var rooms_avalailable = []
-      JsonRoutes.sendResult(res, {code: 200, rooms: rooms_avalailable});
-    });
-
-    JsonRoutes.add("post", "/api/room_status/:id", function (req, res, next) {
-      var user = req.user_id,
-          room = req.params.id,
-          status = req.status;
-
-      if(user != null){
-        Rooms.update({_id:room}, { $set: {'status': status} });
-        JsonRoutes.sendResult(res, {code: 200});
-      }else
-        JsonRoutes.sendResult(res, {code: 500});
+    Meteor.methods({
+      'accounts.newUser'(username, password, roomId) {
+        check(username, String);
+        check(password, String);
+        check(roomId, Integer);
+        Accounts.createUser({
+          'username': username,
+          'password': password,
+          'profile': {'room':roomId}
+        });
+      },
+      'accounts.setRoom'(text) {
+        check(text, Integer);
+        if (! Meteor.userId()) {
+          throw new Meteor.Error('not-authorized');
+        }
+        //TODO write if to make sure that the room is available
+        Accounts.update(Meteor.userId(), {$set: {profile: {room: text}}});
+      },
+      'rooms.setStatus'(status) {
+        check(status, Integer);
+        if (! Meteor.userId()) {
+          throw new Meteor.Error('not-authorized');
+        }
+        if((status == 0 || status == 1) && Meteor.user().profile.room != null)
+          Rooms.update({_id: Meteor.user().profile.room}, { $set: {'status': status} });
+        else
+          throw new Meteor.Error('incorrect status');
+      },
     });
   });
 }
