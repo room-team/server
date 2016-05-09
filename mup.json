@@ -10,15 +10,11 @@
 
   "setupMongo": true,
 
-  "setupNode": true,
-
-  "nodeVersion": "0.10.36",
-
-  "setupPhantom": true,
+  "debug": true,
 
   "enableUploadProgressBar": true,
 
-  "appName": "TR_Tracker",
+  "appName": "TRTracker",
 
   "app": ".",
 
