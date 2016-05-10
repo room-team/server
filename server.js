@@ -1,9 +1,9 @@
-Sensors = new Mongo.Collection("sensors");
-Rooms = new Mongo.Collection("rooms");
+Rooms = new Mongo.Collection('Rooms');
+var labbieRoom = 8;
 
 if (Meteor.isClient) {
   Template.rooms.helpers({
-    room: function () { 
+    room: function () {
       return Rooms.find({});
     }
   });
@@ -12,38 +12,60 @@ if (Meteor.isClient) {
 //Room colection
 //sensor collection
 if (Meteor.isServer) {
+  //  initialize rooms to be vacant
   Meteor.startup(function () {
-    Accounts.onCreateUser(function(options, user) {
-        user.profile['room'] = options.room;
-        return user;
-    });
+    for (i = 1; i <= 12; i++) {
+      if(i == labbieRoom) {
+        Rooms.upsert({
+          id : i
+        }, {
+          $set: {
+            status: 'labbie'
+          }
+        });
+      } else {
+        Rooms.upsert({
+          id : i
+        }, {
+          $set: {
+            status: 'vacant'
+          }
+        });
+      }
+    }
 
     Meteor.methods({
       'accounts.newUser'(username, password, roomId) {
-        check(username, String);
-        check(password, String);
-        check(roomId, Integer);
+        if (roomId == labbieRoom) {
+          throw new Meteor.Error('you cannot register as the labbie room');
+        }
+        if(Meteor.users.findOne({'profile.room': roomId}) != null) {
+          throw new Meteor.Error('that room is already has a sensor');
+        }
         Accounts.createUser({
           'username': username,
           'password': password,
           'profile': {'room':roomId}
         });
       },
-      'accounts.setRoom'(text) {
-        check(text, Integer);
+      'accounts.setRoom'(roomId) {
         if (! Meteor.userId()) {
           throw new Meteor.Error('not-authorized');
         }
-        //TODO write if to make sure that the room is available
-        Accounts.update(Meteor.userId(), {$set: {profile: {room: text}}});
+        if (roomId == labbieRoom) {
+          throw new Meteor.Error('you cannot register as the labbie room');
+        }
+        if(Meteor.users.findOne({'profile.room': roomId}) == null)
+          Meteor.users.update(Meteor.userId(), {$set: {profile: {room: roomId}}});
       },
       'rooms.setStatus'(status) {
-        check(status, Integer);
         if (! Meteor.userId()) {
           throw new Meteor.Error('not-authorized');
         }
-        if((status == 0 || status == 1) && Meteor.user().profile.room != null)
-          Rooms.update({_id: Meteor.user().profile.room}, { $set: {'status': status} });
+        if((status == 0 || status == 1) && Meteor.user().profile.room != null) {
+          var text_status = status == 1 ? 'vacant' : 'occupied';
+          Rooms.update({id: Meteor.user().profile.room}, { $set: {'status': text_status} });
+        }
         else
           throw new Meteor.Error('incorrect status');
       },

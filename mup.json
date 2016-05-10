@@ -3,7 +3,7 @@
     {
       "host": "52.5.6.117",
       "username": "ubuntu",
-      "pem": "../key.pem",
+      "pem": "key.pem",
       "env": {}
     }
   ],

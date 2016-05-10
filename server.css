@@ -7,6 +7,8 @@ body {
   height: 100%;
   width: 100%;
   margin: 0;
+  background: #E8E8E8;
+  font-family: 'Abel', sans-serif;
 }
 
 .rooms {
@@ -20,15 +22,32 @@ body {
 
 .room {
   width: 40%;
+  position: relative;
   margin: .25em 1em;
   height: calc(16.5% - .5em);
   background: #ccc;
+  text-align: right;
+  color: #fff;
+  padding: .25em .4em;
 }
 
+  .room span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    text-transform: capitalize;
+    font-size: 200%;
+    opacity: .4;
+  }
+
 .room.vacant {
-  background: green;
+  background: #30C546;
 }
 
 .room.occupied {
-  background: red;
+  background: #FF4444;
 }
