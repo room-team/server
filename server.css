@@ -24,11 +24,11 @@ body {
   width: 40%;
   position: relative;
   margin: .25em 1em;
-  height: calc(16.5% - .5em);
+  height: calc(16.5% - 1em);
   background: #ccc;
   text-align: right;
   color: #fff;
-  padding: .25em .4em;
+  padding: .25em .5em;
 }
 
   .room span {
