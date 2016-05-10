@@ -1,5 +1,6 @@
 Rooms = new Mongo.Collection('Rooms');
 var labbieRoom = 8;
+var num_rooms = 12;
 
 if (Meteor.isClient) {
   Template.rooms.helpers({
@@ -14,7 +15,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   //  initialize rooms to be vacant
   Meteor.startup(function () {
-    for (i = 1; i <= 12; i++) {
+    for (i = 1; i <= num_rooms; i++) {
       if(i == labbieRoom) {
         Rooms.upsert({
           id : i
@@ -42,7 +43,7 @@ if (Meteor.isServer) {
         if(Meteor.users.findOne({'profile.room': roomId}) != null) {
           throw new Meteor.Error('that room is already has a sensor');
         }
-        Accounts.createUser({
+        return Accounts.createUser({
           'username': username,
           'password': password,
           'profile': {'room':roomId}
@@ -57,6 +58,15 @@ if (Meteor.isServer) {
         }
         if(Meteor.users.findOne({'profile.room': roomId}) == null)
           Meteor.users.update(Meteor.userId(), {$set: {profile: {room: roomId}}});
+        return roomId;
+      },
+      'rooms.getAvailable'() {
+        var result = [];
+        for (i = 1; i <= num_rooms; i++) {
+          if(i != labbieRoom && Meteor.users.findOne({'profile.room': i}) == null)
+            result.push(i);
+        }
+        return result;
       },
       'rooms.setStatus'(status) {
         if (! Meteor.userId()) {
@@ -65,6 +75,7 @@ if (Meteor.isServer) {
         if((status == 0 || status == 1) && Meteor.user().profile.room != null) {
           var text_status = status == 1 ? 'vacant' : 'occupied';
           Rooms.update({id: Meteor.user().profile.room}, { $set: {'status': text_status} });
+          return text_status;
         }
         else
           throw new Meteor.Error('incorrect status');
